@@ -4,36 +4,67 @@
  * and open the template in the editor.
  */
 package DTO;
-import java.util.Comparator;
+
+import UTILS.MyValidations;
+
 /**
  *
  * @author HP
  */
-public class User  {
+public class User implements Comparable<User> {
+    /**
+     *
+     */
     private String username;
+    private String password;
+    private String phoneNumber;
+    private String email;
     private String firstName;
     private String lastName;
-    private String password;
-    private String email;
-    private String phone;
 
-    public User(String username, String firstName, String lastName, String password, String email, String phone) {
+    public User(String username, String password, String phoneNumber, String email, String firstName, String lastName) {
         this.username = username;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.password = password;
-        this.email = email;
-        this.phone = phone;
     }
- public User(String username){
+    
+    public User(String username){
         this.username = username;
     }
+    
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(final String password) {
+        this.password = password;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(final String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
     }
 
     public String getFirstName() {
@@ -52,49 +83,32 @@ public class User  {
         this.lastName = lastName;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
     public String getName(){
         return firstName + " " + lastName;
     }
-    
+
+    public boolean equals(Object user){
+        return this.getUsername().equals(((User) user).getUsername());
+    }
+
+    public String toString(){
+        return String.format("%s;%s;%s;%s;%s;%s",username,password,email,phoneNumber,firstName,lastName);
+    }
+
+  public boolean checkValid(){
+
+     if(!MyValidations.isUsernameValid(username))  return false;
+        if(!MyValidations.isEncryptedPasswordValid(password)) return false;
+        if(!MyValidations.isPhoneNumberValid(phoneNumber)) return false;
+        if(!MyValidations.isEmailValid(email)) return false;
+        return true;
+
+        
+    }
 
     @Override
-    public String toString() {
-        return username + "," + password + "," + firstName + "," + lastName + "," + phone + "," + email;
+    public int compareTo(User o) {
+        return this.getFirstName().compareTo(o.getFirstName());
+        
     }
-    public static Comparator<User> FirstNameComparator = new Comparator<User>() {
-
-        public int compare(User s1, User s2) {
-            String FirstName1 = s1.getFirstName().toUpperCase();
-            String FirstName2 = s2.getFirstName().toUpperCase();
-
-            //ascending order
-            return FirstName1.compareTo(FirstName2);
-
-            //descending order
-            //return StudentName2.compareTo(StudentName1);
-        }
-    };
 }
