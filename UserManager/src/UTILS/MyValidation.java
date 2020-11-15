@@ -4,189 +4,109 @@
  * and open the template in the editor.
  */
 package UTILS;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Scanner;
-import DTO.User;
-import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  *
  * @author HP
  */
-    public class MyValidation {
-    private static final String PHONE_PATTERN = "^[0-9]{10}$";
-    private static final String EMAIL_VALID = "^[\\w-_.+]*[\\w-_.]@([\\w]+\\.)+[\\w]+[\\w]$";
-    private static final String USERNAME_VALID = "^[a-zA-Z0-9]+$";
-    private static final String PASSWORD_VALID = "^[a-zA-Z0-9!~@#$%&*()<>-]+$";
-    
+public class MyValidations {
+     private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{10}$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^\\w+[A-Z0-9._%+-]?+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+    private static final String DATE_FORMAT = "dd/MM/yyyy";
+
     private static Scanner sc = new Scanner(System.in);
+
+    public static boolean isName(String name) {
+        char[] chars = name.toCharArray();
+
+        for (char c : chars) {
+            if (!Character.isLetter(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    // Validate phone number through RegExp
+    public static boolean isPhoneNumberValid(String number) {
+        Matcher matcher = PHONE_PATTERN.matcher(number);
+        return matcher.matches();
+    }
+
+    // Validate email through RegExp
+    public static boolean isEmailValid(String email) {
+        final Matcher matcher = EMAIL_PATTERN.matcher(email);
+        final boolean isValid = matcher.find();
+        return isValid;
+    }
+
+    // Validate Date through date
+    public static boolean isDateValid(String date) {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        dateFormat.setLenient(false);
+        try {
+            dateFormat.parse(date);
+
+        } catch (final ParseException e) {
+            return false;
+        }
+        return true;
+    }
+
+    // Check null and empty String
+    public static boolean isEmptyString(String string) {
+        return string == null || string.isEmpty(); 
+    }
+
     
-    //Validate phone number through RegExp
-  public static String checkInputUserName() {
-        Scanner in = new Scanner(System.in);
-        //loop until user input correct
-        while (true) {
-            String result = in.nextLine().trim();
-            if (result.isEmpty()) {
-                System.err.println("Not empty");
-                System.out.print("Enter again: ");
-            } else if (result.length() >= 5 && !result.contains(" ") && result.matches(USERNAME_VALID)) {
-                return result;
+
+    // Utility for checking returning yes or no with Question dialog
+    public static boolean chooseYN(String questionDialog) {
+        String userChoice = null;
+        boolean choice = false;
+        do {
+            System.out.print(questionDialog + " (Y/N): ");
+            userChoice = sc.nextLine().toUpperCase();
+            if (userChoice.equals("N")) {
+                choice = false;
+            } else if (userChoice.equals("Y")) {
+                choice = true;
             } else {
-                System.out.println("The username must be at least five characters and no spaces");
-                System.out.print("Please enter username again: ");
+                System.out.println("Must be Y or N");
             }
+        } while (!"N".equals(userChoice) && !"Y".equals(userChoice));
+
+        return choice;
+    }
+    
+    public static boolean isPasswordValid(String password){
+        if(password.length() < 6 || password.contains(" ")){
+            return false;
         }
+        return true;       
     }
 
-    public static String checkInputString() {
-        Scanner in = new Scanner(System.in);
-        //loop until user input correct
-        while (true) {
-            String result = in.nextLine().trim();
-            if (result.isEmpty()) {
-                System.err.println("Not empty");
-                System.out.print("Enter again: ");
-            } else return result;
-        }
-    }
-
-    //check phone is number with minimum 9 to max 12 characters
-    public static String checkInputPhone() {
-        while (true) {
-            String result = checkInputString();
-            //check user input phone valid
-            if (result.matches(PHONE_PATTERN)) {
-                return result;
-            } else {
-                System.out.print("Invalid phone format. Phone number must be between 10 and 12 numbers. Enter again: ");
-            }
-        }
-    }
-
-    public static String checkInputPhone2() {
-        Scanner in = new Scanner(System.in);
-        while (true) {
-            String result = in.nextLine();
-            if (result.isEmpty()) {
-                return null;
-            }
-            //check user input phone valid
-            if (result.matches(PHONE_PATTERN)) {
-                return result;
-            } else
-                System.out.print("Invalid phone format. Phone number must be between 10 and 12 numbers. Enter again: ");
-        }
-    }
-
-    //check email
-    public static String checkInputEmail() {
-        //loop until user input correct
-        while (true) {
-            String result = checkInputString();
-            //check user input email valid
-            if (result.matches(EMAIL_VALID)) {
-                return result;
-            } else {
-                System.out.println("Email with format <account name>@<domain>");
-                System.out.print("Enter again: ");
-            }
-        }
-    }
-
-    public static String checkInputEmail2() {
-        Scanner in = new Scanner(System.in);
-        while (true) {
-            String result = in.nextLine();
-            if (result.isEmpty()) {
-                return null;
-            }
-            //check user input phone valid
-            if (result.matches(EMAIL_VALID)) {
-                return result;
-            } else
-                System.out.print("Wrong format. Email must be with format <account name>@<domain>. Please enter again: ");
-
-        }
-    }
-
-    // check password
-    public static String checkInputPass() {
-        // loop until user input correct
-        while (true) {
-            String result = checkInputString();
-            // check user input password valid
-            if (result.length() >= 6 && result.matches(PASSWORD_VALID) && !result.contains(" "))
-                return result;
-            else {
-                System.out.println("Password is invalid (password must be at least 6 characters and must not have space between: ");
-                System.out.print("Enter password again: ");
-            }
-        }
-    }
-
-    public static String checkInputPass2() {
-        // loop until user input correct
-        while (true) {
-            String result = checkInputString();
-            // check user input password valid
-            if (result.length() >= 6 && result.matches(PASSWORD_VALID) && !result.contains(" "))
-                return result;
-            else {
-                System.out.println("Comfirm Password is invalid (password must be at least 6 characters and must not have space between: ");
-                System.out.print("Enter confirm password again: ");
-            }
-        }
-    }
-
-    // check user input yes/no
-    public static boolean checkInputYN() {
-        //System.out.print("Do you want to continue? (Y/N): ");
-        while (true) {
-            String result = checkInputString();
-            if (result.equalsIgnoreCase("Y"))
-                break;
-            if (result.equalsIgnoreCase("N"))
-                return false;
-            System.err.println("Please input y/Y or n/N");
-            System.out.print("Enter again: ");
+    public static boolean isUsernameValid(String username){
+        if(username.length() < 5 || username.contains(" ")){
+            return false;
         }
         return true;
     }
 
-    // check user existed
-    public static boolean checkUserExisted(ArrayList<User> list, String username) {
-        for (User user : list) {
-            if (username.equals(user.getUsername())) {
-                return false;
-            }
-        }
-
+    public static boolean isEncryptedPasswordValid(String password){
+        if(password.length() != 64){
+            return false;
+        } 
         return true;
     }
-
-    // check password existed
-    public static int checkPassExisted2(ArrayList<User> list, String password) {
-        for (User user : list) {
-            if (password.equals(user.getPassword())) {
-                return list.indexOf(user);
-            }
-        }
-        return -1;
-    }
-
-    // check user existed
-    public static int checkUserExisted2(ArrayList<User> list, String username) {
-        for (User user : list) {
-            if (username.equals(user.getUsername())) {
-                return list.indexOf(user);
-            }
-        }
-
-        return -1;
-    }
-       
-            public static String sha256(String password) {
+     public static String sha256(String password) {
         try {
             // Static getInstance method is called with hashing SHA
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -207,5 +127,5 @@ import java.util.ArrayList;
             throw new RuntimeException(ex);
         }
             }
-        
 }
+
